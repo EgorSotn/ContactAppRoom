@@ -1,54 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <data>
+        <variable
+            name="etContact"
+            type="com.example.mycontact.Contact" />
+    </data>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/contactTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="add contact"
-        android:layout_marginBottom="15dp"
-        android:lineSpacingExtra="10dp"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        />
+        <TextView
+            android:id="@+id/contactTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="add contact"
+            android:layout_marginBottom="15dp"
+            android:lineSpacingExtra="10dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            />
 
-    <EditText
-        android:id="@+id/firstNameEt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="first_name"
-        android:layout_marginTop="24dp"
-        android:gravity="top"
-        android:textSize="24sp"/>
-    <EditText
-        android:id="@+id/lastNameEt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="last_name"
-        android:layout_marginTop="24dp"
-        android:gravity="top"
-        android:textSize="24sp"/>
+        <EditText
+            android:id="@+id/firstNameEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="first_name"
+            android:text="@{etContact.firstName}"
+            android:layout_marginTop="24dp"
+            android:gravity="top"
+            android:textSize="24sp"/>
+        <EditText
+            android:id="@+id/lastNameEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="last_name"
+            android:text="@{etContact.lastName}"
+            android:layout_marginTop="24dp"
+            android:gravity="top"
+            android:textSize="24sp"/>
 
-    <EditText
-        android:id="@+id/emailEt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="email"
-        android:layout_marginTop="24dp"
-        android:textStyle="italic"
-        android:gravity="top"
-        android:textSize="18dp" />
-    <EditText
-        android:id="@+id/phoneEt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="phone"
-        android:layout_marginTop="24dp"
-        android:gravity="top"
-        android:textSize="18dp"
-        android:inputType="phone"/>
+        <EditText
+            android:id="@+id/emailEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="email"
+            android:text="@{etContact.email}"
+            android:layout_marginTop="24dp"
+            android:textStyle="italic"
+            android:gravity="top"
+            android:textSize="18dp" />
+        <EditText
+            android:id="@+id/phoneEt"
+            android:text="@{etContact.phone}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="phone"
+            android:layout_marginTop="24dp"
+            android:gravity="top"
+            android:textSize="18dp"
+            android:inputType="phone"/>
 
-</LinearLayout>
+    </LinearLayout>
+</layout>

@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
+import android.content.Context;
 
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -22,10 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mycontact.adapters.ContactAdapter;
-import com.example.mycontact.db.Model.Contact;
+
+import com.example.mycontact.databinding.ActivityMainBinding;
+import com.example.mycontact.databinding.AddContactBinding;
 import com.example.mycontact.db.data.ContactDatabase;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+
 
 import java.util.ArrayList;
 
@@ -33,19 +37,27 @@ public class MainActivity extends AppCompatActivity {
     private ContactDatabase contactDatabase;
     private ArrayList<Contact> contactsArrayList = new ArrayList<>();
     private ContactAdapter contactAdapter;
+
+    private ActivityMainBinding activityMainBinding;
+    private MainActivityButtonHandler activityButtonHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+//        FloatingActionButton fab = findViewById(R.id.fab);
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(activityMainBinding.toolbar);
 
         contactDatabase = Room.databaseBuilder(getApplicationContext(),ContactDatabase.class, "ContactsDB")
                 .allowMainThreadQueries()
                 .build();
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+
+        activityButtonHandler = new MainActivityButtonHandler(this);
+        activityMainBinding.setButtonHandler(activityButtonHandler);
+
+        RecyclerView recyclerView = activityMainBinding.layoutContentMain.recyclerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
@@ -68,61 +80,68 @@ public class MainActivity extends AppCompatActivity {
                 deleteContact(contact);
             }
         }).attachToRecyclerView(recyclerView);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addAndEditContact(false, null, -1);
-            }
-        });
+
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                addAndEditContact(false, null, -1);
+//            }
+//        });
     }
     public void addAndEditContact(boolean isUpdate, Contact contact, int position){
-        LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
-        View view = layoutInflater.inflate(R.layout.add_contact, null);
+        //LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
+        AddContactBinding addContactBinding = DataBindingUtil.inflate( LayoutInflater.from(getApplicationContext()),R.layout.add_contact,null, false);
+       // View view = layoutInflater.inflate(R.layout.add_contact, null);
+        View view = addContactBinding.getRoot();
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setView(view);
 
         TextView contactTitleText = view.findViewById(R.id.contactTitle);
-        EditText firstName= view.findViewById(R.id.firstNameEt);
-        EditText lastName = view.findViewById(R.id.lastNameEt);
-        EditText email = view.findViewById(R.id.emailEt);
-        EditText phone = view.findViewById(R.id.phoneEt);
+//        EditText firstName= view.findViewById(R.id.firstNameEt);
+//        EditText lastName = view.findViewById(R.id.lastNameEt);
+//        EditText email = view.findViewById(R.id.emailEt);
+//        EditText phone = view.findViewById(R.id.phoneEt);
 
         contactTitleText.setText(!isUpdate ? "Add contact" : "Edit contact");
         if(isUpdate && contact !=null){
-            firstName.setText(contact.getFirstName());
-            lastName.setText(contact.getLastName());
-            email.setText(contact.getEmail());
-            phone.setText(contact.getPhone());
+//            firstName.setText(contact.getFirstName());
+//            lastName.setText(contact.getLastName());
+//            email.setText(contact.getEmail());
+//            phone.setText(contact.getPhone());
+            addContactBinding.getEtContact();
         }
         builder.setCancelable(false)
                 .setPositiveButton(isUpdate ? "Update" : "Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(TextUtils.isEmpty(firstName.getText().toString())){
+
+                        if(TextUtils.isEmpty(addContactBinding.firstNameEt.getText().toString())){
                             Toast.makeText(MainActivity.this, "Enter first name", Toast.LENGTH_SHORT).show();
                         }
-                        else if(TextUtils.isEmpty(lastName.getText().toString())){
+                        else if(TextUtils.isEmpty(addContactBinding.lastNameEt.getText().toString())){
                             Toast.makeText(MainActivity.this, "Enter last name", Toast.LENGTH_SHORT).show();
                         }
-                        else if(TextUtils.isEmpty(email.getText().toString())){
+                        else if(TextUtils.isEmpty(addContactBinding.emailEt.getText().toString())){
                             Toast.makeText(MainActivity.this, "Enter email", Toast.LENGTH_SHORT).show();
                         }
-                        else if(TextUtils.isEmpty(phone.getText().toString())){
+                        else if(TextUtils.isEmpty(addContactBinding.phoneEt.getText().toString())){
                             Toast.makeText(MainActivity.this, "Enter phone", Toast.LENGTH_SHORT).show();
                         }
                         else {
                             if(isUpdate && contact!=null){
-                                updateContact(lastName.getText().toString(),
-                                        firstName.getText().toString(),
-                                        email.getText().toString(),
-                                        phone.getText().toString(),
-                                        position);
+
+                                updateContact(addContactBinding.firstNameEt.getText().toString(),
+                                        addContactBinding.lastNameEt.getText().toString(),
+                                        addContactBinding.emailEt.getText().toString(),
+                                        addContactBinding.phoneEt.getText().toString()
+                                        ,position);
                             }
                             else{
-                                addContact(lastName.getText().toString(),
-                                        firstName.getText().toString(),
-                                        email.getText().toString(),
-                                        phone.getText().toString());
+
+                                addContact(addContactBinding.firstNameEt.getText().toString(),
+                                        addContactBinding.lastNameEt.getText().toString(),
+                                        addContactBinding.emailEt.getText().toString(),
+                                        addContactBinding.phoneEt.getText().toString());
                             }
                         }
                     }
@@ -226,4 +245,14 @@ public class MainActivity extends AppCompatActivity {
             loadContact();
         }
     }
+    public class MainActivityButtonHandler{
+        Context context;
+        public MainActivityButtonHandler(Context context) {
+            this.context = context;
+        }
+        public void onButtonClicked(View view){
+            addAndEditContact(false, null, -1);
+        }
+    }
+
 }
